@@ -33,3 +33,50 @@ df = df[
     (df['date_api_call'].dt.year == 2024)
 ]
 print("Necesito que imprima algo")
+
+#Función para calcular la comision, los descuentos y el iva
+def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
+    comision = 0
+
+    # Calculamos la comisión base
+    if empresa == "Innovexa Solutions":
+        comision = peticiones_exitosas * 300
+    elif empresa == "NexaTech Industries":
+        if 0<= peticiones_exitosas <= 10000:
+            comision = peticiones_exitosas * 250
+        elif 10001 <= peticiones_exitosas <= 20000:
+            comision = peticiones_exitosas * 200
+        else:
+            comision = peticiones_exitosas * 170
+    elif empresa == "QuantumLeap Inc.":
+        comision = peticiones_exitosas * 600
+    elif empresa == "Zenith Corp.":
+        if 0<= peticiones_exitosas <= 22000:
+            comision = peticiones_exitosas * 250
+        else:
+            comision = peticiones_exitosas * 130
+    elif empresa == "FusionWave Enterprises":
+        comision = peticiones_exitosas * 300
+
+    # Calculamos el iva (antes de aplicar descuentos)
+    iva = comision * 0.19
+
+    # Aplicamos descuentos sobre la comisión
+    if empresa == "Zenith Corp." and peticiones_no_exitosas > 6000:
+        descuento = comision * 0.05
+        comision -= descuento
+    elif empresa == "FusionWave Enterprises":
+        if 2500 <= peticiones_no_exitosas <= 4500:
+            descuento = comision * 0.05
+            comision -= descuento
+        elif peticiones_no_exitosas > 4500:
+            descuento = comision * 0.08
+            comision -= descuento
+
+    # Calculamos el valor total
+    valor_total = comision + iva
+
+    # Retornamos la comisión, el IVA y el valor total
+    return comision, iva, valor_total
+
+print("Necesito que imprima otra cosa")
