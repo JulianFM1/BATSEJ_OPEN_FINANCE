@@ -38,30 +38,27 @@ print("Necesito que imprima algo")
 def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
     comision = 0
 
-    # Calculamos la comisión base
+    # Calculamos la comisión base según el contrato de la empresa
     if empresa == "Innovexa Solutions":
         comision = peticiones_exitosas * 300
     elif empresa == "NexaTech Industries":
-        if 0<= peticiones_exitosas <= 10000:
+        if peticiones_exitosas <= 10000:
             comision = peticiones_exitosas * 250
         elif 10001 <= peticiones_exitosas <= 20000:
-            comision = peticiones_exitosas * 200
+            comision = (10000 * 250) + ((peticiones_exitosas - 10000) * 200)
         else:
-            comision = peticiones_exitosas * 170
+            comision = (10000 * 250) + (10000 * 200) + ((peticiones_exitosas - 20000) * 170)
     elif empresa == "QuantumLeap Inc.":
         comision = peticiones_exitosas * 600
     elif empresa == "Zenith Corp.":
-        if 0<= peticiones_exitosas <= 22000:
+        if peticiones_exitosas <= 22000:
             comision = peticiones_exitosas * 250
         else:
-            comision = peticiones_exitosas * 130
+            comision = (22000 * 250) + ((peticiones_exitosas - 22000) * 130)
     elif empresa == "FusionWave Enterprises":
         comision = peticiones_exitosas * 300
 
-    # Calculamos el iva (antes de aplicar descuentos)
-    iva = comision * 0.19
-
-    # Aplicamos descuentos sobre la comisión
+    # Aplicamos descuentos sobre la comisión (antes de calcular el IVA)
     if empresa == "Zenith Corp." and peticiones_no_exitosas > 6000:
         descuento = comision * 0.05
         comision -= descuento
@@ -73,10 +70,14 @@ def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
             descuento = comision * 0.08
             comision -= descuento
 
-    # Calculamos el valor total
+    # Calculamos el IVA (19% sobre la comisión final)
+    iva = comision * 0.19
+
+    # Calculamos el valor total (comisión + IVA)
     valor_total = comision + iva
 
     # Retornamos la comisión, el IVA y el valor total
     return comision, iva, valor_total
+
 
 print("Necesito que imprima otra cosa")
