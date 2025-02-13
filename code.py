@@ -80,4 +80,45 @@ def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
     return comision, iva, valor_total
 
 
+# Función para procesar los datos de un mes específico
+def procesar_mes(df, mes):
+    resultados_mes = []
+    
+    # Filtrar por mes
+    df_mes = df[df['date_api_call'].dt.month == mes]
+    
+    # Calcularmos comisiones para cada empresa en el mes
+    for empresa, grupo in df_mes.groupby('commerce_name'):
+        peticiones_exitosas = len(grupo[grupo['ask_status'] == 'Successful'])
+        peticiones_no_exitosas = len(grupo[grupo['ask_status'] == 'Unsuccessful'])
+        
+        comision, iva, valor_total = calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas)
+        
+        # buscamos el NIT y  correo de la empresa
+        commerce_nit = grupo['commerce_nit'].iloc[0]  # Tomamos el primer valor
+        commerce_email = grupo['commerce_email'].iloc[0] 
+        
+        resultados_mes.append({
+            'Fecha-Mes': mes,
+            'Nombre': empresa,
+            'Nit': commerce_nit,
+            'Valor_comision': comision,
+            'valor_iva': iva,
+            'Valor_total': valor_total,
+            'Correo': commerce_email
+        })
+    
+    return pd.DataFrame(resultados_mes)
+
+
+# Procesamos julio y agosto
+julio = procesar_mes(df, 7)  # Mes 7 = julio
+agosto = procesar_mes(df, 8)  # Mes 8 = agosto
+
+# Combinamos los resultados de ambos
+df_resultados = pd.concat([julio, agosto], ignore_index=True)
+
+# Mostramos los resultados
+print(df_resultados)
+
 print("Necesito que imprima otra cosa")
