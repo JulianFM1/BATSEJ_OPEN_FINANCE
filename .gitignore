@@ -1,2 +1,5 @@
 database/
+resultado/
+*.xlsx
 *.sqlite
+code.ipynb
