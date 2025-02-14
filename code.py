@@ -121,4 +121,17 @@ df_resultados = pd.concat([julio, agosto], ignore_index=True)
 # Mostramos los resultados
 print(df_resultados)
 
+#código para exportar los restultados en excel
+import os
+
+# Crear la carpeta 'resultado' si no existe
+if not os.path.exists('resultado'):
+    os.makedirs('resultado')
+
+# Guardar el DataFrame en un archivo Excel dentro de la carpeta 'resultado'
+ruta_archivo = os.path.join('resultado', 'resultados_comisiones.xlsx')
+df_resultados.to_excel(ruta_archivo, index=False)
+
+print(f"Archivo guardado en: {ruta_archivo}")
+
 print("Necesito que imprima otra cosa")
