@@ -5,7 +5,7 @@ Este proyecto implementa una automatización en Python para calcular las comisio
 
 ## Requisitos
 
-Es necesario de tener instalado:
+Es necesario tener instalado:
 
 - Python 3.7 o superior
 - SQLite3
