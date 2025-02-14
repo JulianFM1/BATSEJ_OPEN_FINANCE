@@ -1,5 +1,6 @@
 import sqlite3
 import pandas as pd
+import os
 
 """Conectamos la base de datos """
 conn = sqlite3.connect('database/database.sqlite')
@@ -41,7 +42,7 @@ def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
 
     comision = 0
 
-    # Calculamos la comisión base según el contrato de la empresa
+    """ Calculamos la comisión según el contrato de cada empresa"""
     if empresa == "Innovexa Solutions":
         comision = peticiones_exitosas * 300
     elif empresa == "NexaTech Industries":
@@ -61,7 +62,7 @@ def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
     elif empresa == "FusionWave Enterprises":
         comision = peticiones_exitosas * 300
 
-    # Aplicamos descuentos sobre la comisión (antes de calcular el IVA)
+    """ Aplicamos descuentos sobre la comision antes del iva"""
     if empresa == "Zenith Corp." and peticiones_no_exitosas > 6000:
         descuento = comision * 0.05
         comision -= descuento
@@ -73,17 +74,16 @@ def calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas):
             descuento = comision * 0.08
             comision -= descuento
 
-    # Calculamos el IVA (19% sobre la comisión final)
+    """ Calculamos el iva 19% """
     iva = comision * 0.19
 
-    # Calculamos el valor total (comisión + IVA)
+    """ Calculamos el valor total (comisión + iva) """
     valor_total = comision + iva
 
-    # Retornamos la comisión, el IVA y el valor total
+    """ Retornamos la comisi0n, el iva y el valor total"""
     return comision, iva, valor_total
 
 
-# Función para procesar los datos de un mes específico
 def procesar_mes(df, mes):
     """
     Procesa los datos de un mes específico para cada empres
@@ -98,17 +98,17 @@ def procesar_mes(df, mes):
 
     resultados_mes = []
     
-    # Filtrar por mes
+    """Filtrar por mes"""
     df_mes = df[df['date_api_call'].dt.month == mes]
     
-    # Calcularmos comisiones para cada empresa en el mes
+    """Calcularmos comisiones para cada empresa en el mes"""
     for empresa, grupo in df_mes.groupby('commerce_name'):
         peticiones_exitosas = len(grupo[grupo['ask_status'] == 'Successful'])
         peticiones_no_exitosas = len(grupo[grupo['ask_status'] == 'Unsuccessful'])
         
         comision, iva, valor_total = calcular_comision(empresa, peticiones_exitosas, peticiones_no_exitosas)
         
-        # buscamos el NIT y  correo de la empresa
+        """buscamos el NIT y  correo de la empresa """
         commerce_nit = grupo['commerce_nit'].iloc[0]  # Tomamos el primer valor
         commerce_email = grupo['commerce_email'].iloc[0] 
         
@@ -125,21 +125,20 @@ def procesar_mes(df, mes):
     return pd.DataFrame(resultados_mes)
 
 
-# Procesamos julio y agosto
+""" Procesamos julio y agosto"""
 julio = procesar_mes(df, 7)  # Mes 7 = julio
 agosto = procesar_mes(df, 8)  # Mes 8 = agosto
 
-# Combinamos los resultados de ambos
+""" Combinamos los resultados de ambos"""
 df_resultados = pd.concat([julio, agosto], ignore_index=True)
 
-#código para exportar los restultados en excel
-import os
+"""código para exportar los restultados en excel"""
 
-# Crear la carpeta 'resultado' si no existe
+"""Creamos la carpeta resultado si no existe """
 if not os.path.exists('resultado'):
     os.makedirs('resultado')
 
-# Guardamos el df en un archivo Excel dentro de la carpeta resultado
+"""Guardamos el df en un archivo Excel dentro de la carpeta resultado """
 ruta_archivo = os.path.join('resultado', 'resultados_comisiones.xlsx')
 df_resultados.to_excel(ruta_archivo, index=False)
 
